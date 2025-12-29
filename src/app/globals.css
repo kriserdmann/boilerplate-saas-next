@@ -1,26 +1,72 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Paleta Refine-style */
+  --color-background: #f9fafb;
+  --color-surface: #ffffff;
+  --color-brand-primary: #2563eb;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  --radius-standard: 0.5rem;
+  --radius: 0.5rem;
+  /* Mapping for shadcn */
+
+  --shadow-sleek: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+
+  /* Shadcn Colors Mapped to Refine Palette or Defaults */
+  --color-border: #e5e7eb;
+  --color-input: #e5e7eb;
+  --color-ring: #2563eb;
+
+  --color-primary: #2563eb;
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #0f172a;
+
+  --color-destructive: #ef4444;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+
+  --color-sidebar: #ffffff;
+  --color-sidebar-foreground: #0f172a;
+  --color-sidebar-primary: #2563eb;
+  --color-sidebar-primary-foreground: #ffffff;
+  --color-sidebar-accent: #f1f5f9;
+  --color-sidebar-accent-foreground: #0f172a;
+  --color-sidebar-border: #e5e7eb;
+  --color-sidebar-ring: #2563eb;
+
+  /* Chart colors */
+  --color-chart-1: #2563eb;
+  --color-chart-2: #60a5fa;
+  --color-chart-3: #93c5fd;
+  --color-chart-4: #bfdbfe;
+  --color-chart-5: #dbeafe;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: #0f172a;
+    /* Slate 900 */
+    font-family: var(--font-sans);
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Default Border Color */
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
 }
