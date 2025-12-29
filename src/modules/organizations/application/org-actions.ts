@@ -42,7 +42,7 @@ export async function createOrganizationAction(formData: FormData) {
     }
 }
 
-export async function switchOrganizationAction(orgId: string) {
+export async function switchOrgAction(orgId: string) {
     const cookieStore = await cookies();
     cookieStore.set('current_org_id', orgId, {
         path: '/',
@@ -51,6 +51,6 @@ export async function switchOrganizationAction(orgId: string) {
         maxAge: 60 * 60 * 24 * 30, // 30 days
     });
 
-    revalidatePath('/', 'layout'); // Refresh everything
-    return { success: true };
+    revalidatePath('/dashboard', 'layout');
+    redirect('/dashboard');
 }

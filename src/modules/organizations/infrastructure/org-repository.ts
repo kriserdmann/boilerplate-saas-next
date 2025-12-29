@@ -1,28 +1,40 @@
 import { createClientServer } from '@/lib/supabase';
 import { AppError } from '@/modules/shared/domain/app-error';
 
+// Atualizado para incluir metadados da membership
 export interface Organization {
     id: string;
     name: string;
     slug: string;
     avatar_url: string | null;
-    owner_id: string;
+    memberships: { role: string }[];
 }
 
-export async function getUserOrganizations(userId: string) {
+export async function getUserOrganizations(userId?: string) {
     const supabase = await createClientServer();
 
-    const { data: orgs, error } = await supabase
+    // O RLS garante que só retornem as orgs certas. 
+    // userId opcional pois RLS usa auth.uid(), mas mantemos compatibilidade se quiser passar.
+
+    const { data, error } = await supabase
         .from('organizations')
-        .select('*, memberships!inner(user_id)')
-        .eq('memberships.user_id', userId);
+        .select(`
+      id,
+      name,
+      slug,
+      avatar_url,
+      memberships!inner (
+        role
+      )
+    `);
 
     if (error) {
         console.error('Error fetching orgs:', error);
         return [];
     }
 
-    return orgs as Organization[];
+    // Cast manual pois o tipo retornado pelo Supabase tem estrutura complexa
+    return data as unknown as Organization[];
 }
 
 export async function createOrganization(name: string, userId: string) {

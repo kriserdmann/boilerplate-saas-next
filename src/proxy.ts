@@ -55,23 +55,24 @@ export async function proxy(request: NextRequest) {
         const isOnboarding = request.nextUrl.pathname === '/onboarding';
 
         if (!orgId) {
-            // Tenta buscar a primeira organização do usuário
-            const { data: memberships } = await supabase
-                .from('memberships')
-                .select('org_id')
-                .eq('user_id', user.id)
-                .limit(1);
+            // Se não tem cookie, buscamos a primeira org disponível usando RLS
+            // "Selecione 1 org que eu tenho acesso"
+            const { data: org } = await supabase
+                .from('organizations')
+                .select('id')
+                .limit(1)
+                .single();
 
-            if (memberships && memberships.length > 0) {
+            if (org) {
                 // Usuário tem org, mas estava sem cookie. Define e segue.
-                const firstOrgId = memberships[0].org_id;
-                response.cookies.set('current_org_id', firstOrgId, {
+                response.cookies.set('current_org_id', org.id, {
                     path: '/',
                     httpOnly: true,
                     sameSite: 'lax',
                     maxAge: 60 * 60 * 24 * 30
                 });
-                // Se estava indo pro onboarding mas já tem org, manda pro dashboard
+
+                // Se estava indo pro onboarding, redireciona pro dashboard
                 if (isOnboarding) {
                     const url = request.nextUrl.clone();
                     url.pathname = '/dashboard';
@@ -86,10 +87,7 @@ export async function proxy(request: NextRequest) {
                 }
             }
         } else {
-            // Tem orgId no cookie. Se tentar ir pro onboarding, redireciona pro dashboard (opcional, mas boa UX)
-            // Mas permite criar nova org se clicou intencionalmente? 
-            // O fluxo "Criar Nova Org" geralmente é dentro do dashboard ou uma rota específica. 
-            // O /onboarding é pra "Primeira Org".
+            // Tem orgId no cookie. Se estiver no onboarding, redireciona pro dashboard
             if (isOnboarding) {
                 const url = request.nextUrl.clone();
                 url.pathname = '/dashboard';
